@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Jiro — 12-Week Hypertrophy + Posture Plan</title>
+<style>
+:root{
+  --bg:#0b0e13; --card:#111822; --muted:#8ea0b7; --text:#e6edf5; --accent:#6bd1ff; --accent2:#9ef0a2;
+  --warn:#ffd166; --bad:#ff7b7b; --good:#58d68d; --line:#253246; --pill:#121c2a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent)}
+.container{max-width:980px;margin:0 auto;padding:14px}
+.header{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,14,19,.98),rgba(11,14,19,.92));backdrop-filter:blur(6px);z-index:50;border-bottom:1px solid var(--line)}
+.header .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 14px}
+.h1{font-size:18px;font-weight:700;letter-spacing:.1px}
+.small{color:var(--muted);font-size:12px}
+select,input,button,textarea{
+  background:#0f1520;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+  font-size:14px
+}
+button{cursor:pointer}
+.btn{background:linear-gradient(180deg,#132133,#0f1a2a);border-color:#1f2d42}
+.btn-accent{background:linear-gradient(180deg,#103247,#0e2a3a);border-color:#204a63}
+.btn-good{background:linear-gradient(180deg,#0f2f24,#0d261d);border-color:#1f4f3d}
+.grid{display:grid;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.space{height:6px}
+.tabbar{position:sticky;bottom:0;background:rgba(11,14,19,.98);border-top:1px solid var(--line);z-index:40}
+.tabs{display:grid;grid-template-columns:repeat(6,1fr)}
+.tab{padding:10px 4px;text-align:center;font-size:12px;color:var(--muted)}
+.tab.active{color:var(--accent)}
+.badge{font-size:11px;color:#a2c8ff;background:#16243a;border:1px solid var(--line);padding:2px 8px;border-radius:999px}
+table{width:100%;border-collapse:separate;border-spacing:0}
+th,td{border-bottom:1px solid var(--line);padding:8px 6px;vertical-align:top}
+th{color:var(--muted);font-weight:600;text-align:left;background:#101723;position:sticky;top:92px;z-index:5}
+.k{font-weight:600;color:var(--accent2)}
+.checkbox{appearance:none;width:22px;height:22px;border:1.6px solid #32537f;border-radius:6px;display:inline-grid;place-content:center;margin-right:8px;background:#0e1420}
+.checkbox:checked{background:linear-gradient(180deg,#1e9de6,#26b4ff);border-color:#26b4ff}
+.setbox{display:inline-flex;gap:6px;flex-wrap:wrap}
+.tag{background:#152033;border:1px solid var(--line);color:var(--muted);padding:2px 8px;border-radius:999px;font-size:11px}
+h2{font-size:16px;margin:0 0 8px 0}
+h3{font-size:14px;margin:12px 0 6px 0;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:10px 0}
+.notice{background:#0f1420;border:1px dashed #2a3c59;border-radius:12px;padding:10px;color:var(--muted)}
+.warn{color:var(--warn)}
+.good{color:var(--accent2)}
+.bad{color:var(--bad)}
+footer{padding:20px 10px 90px 10px;color:var(--muted);font-size:12px;text-align:center}
+.sticky-title{position:sticky;top:82px;background:var(--card);padding:6px 8px;border-bottom:1px solid var(--line);z-index:6;border-radius:10px}
+input[type="date"]{padding:8px 10px}
+.rowwrap{display:flex;flex-wrap:wrap;gap:8px}
+.flex{display:flex;gap:8px}
+.flex-col{display:flex;flex-direction:column;gap:8px}
+.justify-between{justify-content:space-between}
+.w100{width:100%}
+.details{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.details summary{list-style:none;cursor:pointer;padding:10px 12px;background:#0f1622;border-bottom:1px solid var(--line)}
+.details summary::-webkit-details-marker{display:none}
+.details[open] summary{border-bottom:1px solid var(--line)}
+.details .content{padding:10px 12px}
+.scroller{display:flex;gap:8px;overflow:auto;padding-bottom:6px}
+.weekpill{padding:6px 10px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;color:var(--muted);background:var(--pill);font-size:12px}
+.weekpill.active{background:linear-gradient(180deg,#113049,#0e2437);color:#e5f6ff;border-color:#234f73}
+.session{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:8px 0}
+.sessionHead{display:flex;align-items:center;justify-content:space-between;background:#0f1724;padding:10px 12px}
+.sessionTitle{font-weight:600}
+.btn-xs{padding:6px 8px;border-radius:10px;font-size:12px}
+.bodyPad{padding:10px 12px}
+.label{color:var(--muted);font-size:12px}
+.input{width:100%;margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid1{display:grid;grid-template-columns:1fr;gap:8px}
+.timer{font-variant-numeric:tabular-nums;font-size:18px;padding:6px 10px;border:1px solid var(--line);border-radius:10px}
+.progress{height:6px;background:#0e1420;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,#1e9de6,#26b4ff)}
+.cap{display:inline-block;min-width:26px;text-align:center}
+/* iOS tap highlight */
+a,button,input,select{ -webkit-tap-highlight-color: rgba(255,255,255,0.05); }
+/* print */
+@media print{
+  .header,.tabbar{display:none}
+  body{background:#fff;color:#000}
+  .card{border:1px solid #aaa}
+  th{position:static;background:#eee;color:#000}
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="row">
+    <div class="h1">12-Week Hypertrophy + Posture</div>
+    <div class="badge">Knee Iso + Flat-Foot</div>
+    <div class="small">Progress saves on your device</div>
+  </div>
+  <div class="row" style="padding:0 14px 10px 14px">
+    <label class="small">Start&nbsp;</label>
+    <input id="startDate" type="date">
+    <label class="small">&nbsp;Split</label>
+    <select id="splitSel">
+      <option value="4">4-Day</option>
+      <option value="5">5-Day</option>
+    </select>
+    <button class="btn btn-accent" id="exportBtn">Export</button>
+    <label class="btn" style="position:relative;overflow:hidden">
+      Import
+      <input id="importFile" type="file" accept=".json" style="position:absolute;inset:0;opacity:0">
+    </label>
+  </div>
+</div>
+
+<div class="container grid" id="main">
+  <div class="card">
+    <div class="row justify-between">
+      <h2>Weeks</h2>
+      <div class="small" id="daterange"></div>
+    </div>
+    <div class="scroller" id="weekScroller"></div>
+  </div>
+
+  <div class="card" id="weekCard">
+    <div class="sticky-title row justify-between">
+      <div class="row">
+        <div class="badge" id="weekTitle">Week 1</div>
+        <div class="small" id="weekDates">Sep 23 – Sep 29, 2025</div>
+      </div>
+      <div class="small" id="weekNote"></div>
+    </div>
+
+    <div id="sessions"></div>
+  </div>
+
+  <div class="card">
+    <h2>Patellar Tendinopathy Block</h2>
+    <div class="grid1">
+      <div class="details"><summary>Stage 1 (Wk 1–2): Isometrics</summary>
+        <div class="content">
+          <p>Spanish Squat / Wall Sit at ~60–90°: <b>5×45s</b>, RPE 7–8; optional Leg Extension iso <b>4×30–45s</b> at ~60°.</p>
+          <div class="row">
+            <div class="timer" id="isoTimer">00:45</div>
+            <button class="btn btn-accent btn-xs" onclick="startTimer(45)">Start 45s</button>
+            <button class="btn btn-xs" onclick="stopTimer()">Stop</button>
+          </div>
+          <div class="progress"><i id="isoProg" style="width:0%"></i></div>
+          <p class="small">Tip: keep pain ≤ <b>2–3/10</b> during/after; if higher or >24 h, regress ROM next session.</p>
+        </div>
+      </div>
+      <div class="details"><summary>Stage 2 (Wk 3–4): Slow Isotonics</summary>
+        <div class="content">Heel-elevated Goblet Squat or Leg Press (partial ROM): <b>3–4×8 @ 4-0-2</b>; Split Squat short ROM <b>3×8/side</b>. Keep isometrics 2–3 sets, 3–4×/wk.</div>
+      </div>
+      <div class="details"><summary>Stage 3 (Wk 5–8): Full ROM</summary>
+        <div class="content">Squat to parallel <b>4×6–8 @ 3-0-1</b>; Step-ups <b>3×8/side</b>. Keep isometrics 2–3×/wk.</div>
+      </div>
+      <div class="details"><summary>Stage 4 (Wk 9–12): Strength</summary>
+        <div class="content">Back/Front/Safety-Bar Squat <b>4×5–6 @ RPE 7–8</b>; Paused Squat <b>2–3×3–5</b> (light). Isometrics 1–2×/wk as needed.</div>
+      </div>
+      <div class="details"><summary>Flare-up (48–72 h) plan</summary>
+        <div class="content">Replace squat/leg press with <b>5×45s</b> Spanish squat; keep hip thrust/RDL; 15–20 min Z2 bike/elliptical. Reduce knee-dominant volume −40–50%. Resume prior ROM/load when pain ≤2/10 for 24 h.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Flat-Foot Daily Micro-Routine (8–12 min)</h2>
+    <table>
+      <thead><tr><th>#</th><th>Drill</th><th>Prescription</th><th>Done</th></tr></thead>
+      <tbody id="feetBody"></tbody>
+    </table>
+    <h3>Progression Cues</h3>
+    <ul class="small">
+      <li>Wk 1–2: learn positions, build to 30s holds.</li>
+      <li>Wk 3–4: eyes-closed short-foot 2×15s; tib raises 3×15.</li>
+      <li>Wk 5–6: single-leg short-foot 2×15s; pause 1–2s at calf top.</li>
+      <li>Wk 7–8: load calf raises (DBs); tib raises 3×20.</li>
+      <li>Wk 9–12: add single-leg balance 2×20–30s; progress big-toe extension gently.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Posture & Mobility Stack (pick 2–3/session)</h2>
+    <ul class="small">
+      <li><b>T-Spine:</b> Foam-roller extensions 2×6; Open-book 2×6/side; Quadruped rotations 2×6/side.</li>
+      <li><b>Scapular control:</b> Wall slides 2×8; Face pulls 2×12–15; Prone Y‑T‑W 2×6 each.</li>
+      <li><b>Hips:</b> Half-kneel hip-flexor 2×30s (glute on); 90/90 switches 2×6/side; Frog rocks 2×8.</li>
+      <li><b>Hamstrings/Glutes:</b> Eccentric RDL patterning 2×6; Side-lying abduction 2×12.</li>
+      <li><b>Ankles:</b> Knee-to-wall 2×8/side; Split-stance dorsiflexion pulses 2×10/side.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Technique Cues</h2>
+    <div class="grid1 small">
+      <div><span class="k">Squat:</span> Tripod foot; knees over 2nd–3rd toe; brace then sit between hips.</div>
+      <div><span class="k">RDL:</span> Hips back; shins vertical; lats ‘in your back pockets’.</div>
+      <div><span class="k">Hip Thrust:</span> Chin tucked; ribs down; pause & squeeze at top.</div>
+      <div><span class="k">Bench:</span> Shoulders down/back; light leg drive; touch low chest.</div>
+      <div><span class="k">OHP:</span> Glutes tight; ribs down; head through at top.</div>
+      <div><span class="k">Row:</span> Chest tall; pull with elbows; finish below ribs, no shrug.</div>
+      <div><span class="k">Split Squat:</span> Front tripod; knee over mid-toes; slight forward torso.</div>
+      <div><span class="k">Calf Raise:</span> Full heel drop; controlled rise; pause at top.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Red Flags</h2>
+    <div class="notice">
+      Avoid deep knee flexion under heavy load early. No jumping/sprints Phases 1–2. Stop & seek care if swelling, sharp pain >4/10 >24h, locking/catching/giving-way, numbness/tingling, or night pain.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Tracking & Check-ins</h2>
+    <div class="grid2">
+      <div class="w100">
+        <label class="label">Week</label>
+        <select class="input" id="trackWeek"></select>
+      </div>
+      <div class="w100">
+        <label class="label">Bodyweight (kg)</label>
+        <input class="input" id="bw" type="number" step="0.1">
+      </div>
+      <div class="w100">
+        <label class="label">Waist (cm)</label>
+        <input class="input" id="waist" type="number" step="0.1">
+      </div>
+      <div class="w100">
+        <label class="label">Thigh (cm)</label>
+        <input class="input" id="thigh" type="number" step="0.1">
+      </div>
+      <div class="w100">
+        <label class="label">Shoulders (cm)</label>
+        <input class="input" id="shoulders" type="number" step="0.1">
+      </div>
+      <div class="w100">
+        <label class="label">Avg Session RPE (1–10)</label>
+        <input class="input" id="srpe" type="number" step="0.1" min="1" max="10">
+      </div>
+      <div class="w100">
+        <label class="label">Knee Pain (0–10)</label>
+        <input class="input" id="knee" type="number" step="0.1" min="0" max="10">
+      </div>
+      <div class="w100">
+        <label class="label">Steps/day</label>
+        <input class="input" id="steps" type="number" step="1">
+      </div>
+      <div class="w100">
+        <label class="label">Notes</label>
+        <textarea class="input" id="notes" rows="3" placeholder="sleep, appetite, flare-ups, travel..."></textarea>
+      </div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn-good" id="saveTrack">Save</button>
+      <span class="small" id="trackSaved"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Nutrition Quick Hits</h2>
+    <ul class="small">
+      <li>Surplus <b>+250–350 kcal/day</b> (aim 65–66 kg in 12 weeks).</li>
+      <li>Protein <b>1.6–2.2 g/kg</b> (≈100–135 g/day) across 3–4 meals.</li>
+      <li>Carbs focused around training (1–1.5 g/kg pre+post combined).</li>
+      <li>Creatine Monohydrate <b>3–5 g/day</b> (daily, any time).</li>
+      <li>Lactose-free or plant protein as needed.</li>
+    </ul>
+  </div>
+
+  <footer>Tips: Share → “Add to Home Screen” on iPhone for app-like access. Data stays on your device (localStorage).</footer>
+</div>
+
+<div class="tabbar">
+  <div class="tabs">
+    <div class="tab active" data-tab="weeks">Weeks</div>
+    <div class="tab" data-tab="knee">Knee</div>
+    <div class="tab" data-tab="feet">Feet</div>
+    <div class="tab" data-tab="mobility">Mobility</div>
+    <div class="tab" data-tab="tech">Cues</div>
+    <div class="tab" data-tab="track">Track</div>
+  </div>
+</div>
+
+<script>
+// ==== Data ====
+const DEFAULT_START = "2025-09-23";
+
+const sessionsDef = {
+  "Lower A (Quad Bias + Knee Care)": [
+    ["Goblet Squat (to box/slant as tolerated)","4×6–8","3-0-2","2–3m","RPE 6–7",5],
+    ["RDL","4×6–8","3-1-2","2–3m","RPE 6–7",5],
+    ["Spanish Squat or Wall Sit (isometric)","5×45s","—","2–3m","RPE 7–8",5],
+    ["Leg Press (mid stance) or Split Squat","3×10–12","3-0-1","2m","RPE 7",4],
+    ["Standing Calf Raise (straight knee)","3×10–12","2-1-2","90s","—",3],
+    ["Tibialis Raises (back-to-wall)","3×12–15","slow","60–90s","—",3],
+  ],
+  "Lower B (Glutes/Hamstrings + Calves)": [
+    ["Hip Thrust (2s pause at top)","4×8–10","2-2-2","2–3m","RPE 7–8",5],
+    ["Bulgarian Split Squat (shallow→full)","3×8/side","3-0-2","2m","RPE 7",3],
+    ["Leg Curl (machine/Swiss ball)","3×10–12","3-0-2","90s","—",3],
+    ["Front-Foot Elevated Split Squat","2–3×10/side","3-0-2","2m","—",3],
+    ["Seated Calf Raise (bent knee)","3×12–15","2-1-2","90s","—",3],
+    ["Knee Iso Top-Up (optional)","2×45s","—","2m","—",2],
+  ],
+  "Upper A (Balanced Push/Pull)": [
+    ["Bench Press (or DB Bench)","4×6–8","3-0-1","2–3m","RPE 6–7",5],
+    ["Chest-Supported Row (or 1-arm DB Row)","4×8–10","2-1-2","2m","RPE 7–8",5],
+    ["Incline DB Press","3×8–10","3-0-1","2m","RPE 7",3],
+    ["Lat Pulldown / Assisted Pull-up","3×8–12","2-1-2","90s","RPE 7",3],
+    ["Face Pulls","3×12–15","2-1-2","60–90s","—",3],
+    ["Pallof Press + Farmer Carry","2×10/side + 2×30–40m","—","60–90s","—",2],
+  ],
+  "Upper B (Delts/Arms/Lats)": [
+    ["Overhead Press (or Seated DB Press)","4×5–7","3-0-1","2–3m","RPE 6–7",5],
+    ["Pull-ups/Assisted (or Neutral Pulldown)","4×5–7","2-1-2","2m","RPE 7",5],
+    ["Cable/Landmine Row","3×8–10","2-1-2","90s","—",3],
+    ["Lateral Raises","3×12–15","1s top","60–90s","—",3],
+    ["Cable Fly (low-to-high)","2–3×12–15","—","60–90s","—",3],
+    ["EZ-Bar Curl + Rope Pressdown","3×8–12 + 3×10–12","—","60–90s","—",3],
+  ],
+  "Shoulders/Arms + Core (5-Day extra)": [
+    ["Overhead Press","3×6–8","3-0-1","2m","RPE 7",3],
+    ["Lateral Raise","3×12–15","—","60–90s","—",3],
+    ["Rear Delt Fly","3×12–15","—","60–90s","—",3],
+    ["Incline DB Curl","3×10–12","—","60–90s","—",3],
+    ["Cable OH Triceps Extension","3×10–12","—","60–90s","—",3],
+    ["Dead Bug + Pallof + Suitcase Carry","2×8/side + 2×10/side + 2×30–40m","—","—","—",2],
+  ],
+  "Optional Conditioning + Mobility": [
+    ["Bike or Elliptical (Z2)","20–30 min","—","—","—",1],
+    ["Mobility Flow (T-spine/Hips/Ankles)","10–15 min","—","—","—",1],
+  ]
+};
+
+const warmupText = "3–5m easy row/bike/elliptical; foam roll quads/TFL/calves 30–45s; T-spine ext 2×6; ankles knee-to-wall 2×6/side";
+const activationText = "Feet: short-foot 2×20–30s; toe yoga 1×8/side • Scapula: wall slides 2×8; face pulls 2×12 • Knee iso (Lower days)";
+
+const schedules = {
+  "4": [
+    ["Tue","Lower A (Quad Bias + Knee Care)"],
+    ["Wed","Upper A (Balanced Push/Pull)"],
+    ["Fri","Lower B (Glutes/Hamstrings + Calves)"],
+    ["Sat","Upper B (Delts/Arms/Lats)"],
+    ["Sun (opt.)","Optional Conditioning + Mobility"],
+  ],
+  "5": [
+    ["Tue","Lower A (Quad Bias + Knee Care)"],
+    ["Wed","Upper A (Balanced Push/Pull)","Upper Push"], // label stays Upper A per template
+    ["Thu","Upper B (Delts/Arms/Lats)","Upper Pull"],    // label stays Upper B per template
+    ["Fri","Lower B (Glutes/Hamstrings + Calves)"],
+    ["Sat","Shoulders/Arms + Core (5-Day extra)"],
+    ["Sun (opt.)","Optional Conditioning + Mobility"],
+  ]
+};
+
+const feetDrills = [
+  ["1","Short-Foot (tripod)","3×20–30 s/side"],
+  ["2","Toe Yoga (big toe up/others down & switch)","2×8/side"],
+  ["3","Arch Lifts (no toe curl)","2×8/side, 3–5 s holds"],
+  ["4","Towel Scrunches","1–2×10/side"],
+  ["5","Standing Calf Raise (straight knee)","2×12"],
+  ["6","Seated/Bent-Knee Calf Raise","2×12"],
+  ["7","Tibialis Raises (back to wall)","2×12–15"],
+  ["8","Plantar Massage (ball)","60–90 s/foot"],
+];
+
+// ==== State / Storage ====
+const SKEY = "jiro_plan_state_v1";
+let state = loadState() || {
+  start: DEFAULT_START,
+  split: "4",
+  week: 1,
+  checks: {},  // { key: true/false }
+  tracking: {} // { week: {...} }
+};
+
+function saveState(){ localStorage.setItem(SKEY, JSON.stringify(state)); }
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(SKEY)||""); }catch(e){ return null; }
+}
+function resetChecksForWeek(w){
+  // no automatic reset; keep user's checks
+}
+
+// ==== Helpers ====
+function el(sel, root=document){ return root.querySelector(sel); }
+function els(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
+function fmtDate(d){
+  const o = {month:"short", day:"numeric"};
+  return d.toLocaleDateString(undefined, o);
+}
+function weekRange(startStr, w){
+  const s0 = new Date(startStr+"T00:00:00");
+  const s = new Date(s0.getTime() + (w-1)*7*864e5);
+  const e = new Date(s.getTime() + 6*864e5);
+  return [s,e];
+}
+function keyFor(pathArr){ return pathArr.join(" | "); }
+
+// ==== Build UI ====
+function buildWeekPills(){
+  const scroller = el("#weekScroller");
+  scroller.innerHTML = "";
+  for(let w=1; w<=12; w++){
+    const pill = document.createElement("button");
+    pill.className = "weekpill"+(state.week===w?" active":"");
+    pill.textContent = "Week "+w;
+    pill.onclick = ()=>{ state.week=w; saveState(); renderWeek(); buildWeekPills(); };
+    scroller.appendChild(pill);
+  }
+  const [s,e] = weekRange(state.start, 1);
+  const [s2,e2] = weekRange(state.start, 12);
+  el("#daterange").textContent = fmtDate(s)+" – "+fmtDate(e2)+", "+e2.getFullYear();
+}
+
+function renderWeek(){
+  el("#weekTitle").textContent = "Week "+state.week;
+  const [s,e] = weekRange(state.start, state.week);
+  el("#weekDates").textContent = fmtDate(s)+" – "+fmtDate(e)+", "+e.getFullYear();
+  el("#weekNote").textContent = ([4,8,12].includes(state.week) ? "Deload: volume −30–40%, RPE 5–6" : "");
+
+  const cont = el("#sessions");
+  cont.innerHTML = "";
+
+  const sched = schedules[state.split];
+  sched.forEach(([day, sessName, alt])=>{
+    // Session card
+    const wrap = document.createElement("div");
+    wrap.className = "session";
+    const head = document.createElement("div");
+    head.className = "sessionHead";
+    head.innerHTML = `<div class="sessionTitle">${day} — ${alt?`<span class="small">${alt}</span>`:``}<br><span class="small">${sessName}</span></div>
+      <div class="row">
+        <button class="btn btn-xs" onclick="toggleDetails(this)">Open</button>
+      </div>`;
+    const body = document.createElement("div");
+    body.className = "bodyPad";
+    body.style.display = "none";
+
+    // Warm-up / Activation
+    body.appendChild(sectionCheck("Warm-up (5–8m)", warmupText, [day, state.week, "warmup", sessName]));
+    body.appendChild(sectionCheck("Activation (6–10m)", activationText, [day, state.week, "activation", sessName]));
+
+    // Exercise table
+    const t = document.createElement("table");
+    t.innerHTML = `<thead><tr><th>Exercise</th><th>Sets×Reps</th><th>Tempo</th><th>Rest</th><th>RPE</th><th>Sets</th></tr></thead>`;
+    const tb = document.createElement("tbody");
+    (sessionsDef[sessName]||[]).forEach((it, idx)=>{
+      const [name, sr, tempo, rest, rpe, sets] = it;
+      const tr = document.createElement("tr");
+      const kbase = [day, state.week, sessName, "ex", idx];
+      tr.innerHTML = `<td>${name}</td><td>${sr}</td><td>${tempo}</td><td>${rest}</td><td>${rpe}</td>`;
+      const td = document.createElement("td");
+      td.className = "setbox";
+      for(let i=0; i<sets; i++){
+        const cap = document.createElement("span");
+        cap.className = "cap";
+        const key = keyFor(kbase.concat(["set", i]));
+        cap.innerHTML = `<input type="checkbox" class="checkbox" ${state.checks[key]?"checked":""} onchange="toggleCheck('${key}', this.checked)">`;
+        td.appendChild(cap);
+      }
+      tr.appendChild(td);
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    body.appendChild(t);
+
+    wrap.appendChild(head);
+    wrap.appendChild(body);
+    cont.appendChild(wrap);
+  });
+}
+
+function sectionCheck(title, text, path){
+  const div = document.createElement("div");
+  div.style.margin = "6px 0 10px 0";
+  const key = keyFor(path);
+  const checked = !!state.checks[key];
+  div.innerHTML = `<div class="row">
+    <input type="checkbox" class="checkbox" ${checked?"checked":""} onchange="toggleCheck('${key}', this.checked)">
+    <div><div class="label">${title}</div><div class="small">${text}</div></div>
+  </div>`;
+  return div;
+}
+
+function toggleDetails(btn){
+  const body = btn.closest(".session").querySelector(".bodyPad");
+  const open = body.style.display !== "none";
+  body.style.display = open ? "none" : "block";
+  btn.textContent = open ? "Open" : "Close";
+}
+
+function toggleCheck(key, val){
+  state.checks[key] = !!val;
+  saveState();
+}
+
+function buildFeet(){
+  const tbody = el("#feetBody");
+  tbody.innerHTML = "";
+  feetDrills.forEach(([i,drill,presc], idx)=>{
+    const tr = document.createElement("tr");
+    const k = keyFor(["feet", idx]);
+    tr.innerHTML = `<td>${i}</td><td>${drill}</td><td>${presc}</td>
+      <td><input type="checkbox" class="checkbox" ${state.checks[k]?"checked":""} onchange="toggleCheck('${k}', this.checked)"></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// Tracking
+function buildTrack(){
+  const sel = el("#trackWeek");
+  sel.innerHTML = "";
+  for(let w=1; w<=12; w++){
+    const op = document.createElement("option");
+    op.value = w; op.textContent = "Week "+w;
+    if(w===state.week) op.selected = true;
+    sel.appendChild(op);
+  }
+  sel.onchange = ()=>{ loadTrack(+sel.value); };
+  loadTrack(+sel.value);
+}
+function loadTrack(w){
+  const rec = state.tracking[w] || {};
+  el("#bw").value = rec.bw || "";
+  el("#waist").value = rec.waist || "";
+  el("#thigh").value = rec.thigh || "";
+  el("#shoulders").value = rec.shoulders || "";
+  el("#srpe").value = rec.srpe || "";
+  el("#knee").value = rec.knee || "";
+  el("#steps").value = rec.steps || "";
+  el("#notes").value = rec.notes || "";
+}
+el("#saveTrack").onclick = ()=>{
+  const w = +el("#trackWeek").value;
+  state.tracking[w] = {
+    bw: el("#bw").value,
+    waist: el("#waist").value,
+    thigh: el("#thigh").value,
+    shoulders: el("#shoulders").value,
+    srpe: el("#srpe").value,
+    knee: el("#knee").value,
+    steps: el("#steps").value,
+    notes: el("#notes").value,
+  };
+  saveState();
+  el("#trackSaved").textContent = "Saved ✓";
+  setTimeout(()=> el("#trackSaved").textContent="", 1500);
+};
+
+// Export / Import
+el("#exportBtn").onclick = ()=>{
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "jiro_plan_progress.json"; a.click();
+  URL.revokeObjectURL(url);
+};
+el("#importFile").addEventListener("change", (ev)=>{
+  const f = ev.target.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const obj = JSON.parse(reader.result);
+      state = obj; saveState();
+      // re-render
+      el("#startDate").value = state.start;
+      el("#splitSel").value = state.split;
+      buildWeekPills(); renderWeek(); buildFeet(); buildTrack();
+      alert("Imported!");
+    }catch(e){ alert("Import failed: "+e); }
+  };
+  reader.readAsText(f);
+});
+
+// Start date & split
+el("#startDate").value = state.start;
+el("#startDate").onchange = ()=>{ state.start = el("#startDate").value || DEFAULT_START; saveState(); buildWeekPills(); renderWeek(); };
+el("#splitSel").value = state.split;
+el("#splitSel").onchange = ()=>{ state.split = el("#splitSel").value; saveState(); renderWeek(); };
+
+// Tabs (just scroll to relevant section)
+els(".tab").forEach(t=>{
+  t.onclick = ()=>{
+    els(".tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    const which = t.getAttribute("data-tab");
+    if(which==="weeks") window.scrollTo({top:0, behavior:"smooth"});
+    if(which==="knee") document.querySelectorAll(".card")[1].scrollIntoView({behavior:"smooth"});
+    if(which==="feet") document.querySelectorAll(".card")[2].scrollIntoView({behavior:"smooth"});
+    if(which==="mobility") document.querySelectorAll(".card")[3].scrollIntoView({behavior:"smooth"});
+    if(which==="tech") document.querySelectorAll(".card")[4].scrollIntoView({behavior:"smooth"});
+    if(which==="track") document.querySelectorAll(".card")[6].scrollIntoView({behavior:"smooth"});
+  };
+});
+
+// Iso Timer
+let timerId = null, timerEnd = 0;
+function startTimer(sec){
+  stopTimer();
+  const prog = el("#isoProg"); const disp = el("#isoTimer");
+  timerEnd = Date.now() + sec*1000;
+  timerId = setInterval(()=>{
+    const left = Math.max(0, Math.round((timerEnd - Date.now())/1000));
+    const pct = 100 - Math.round((left/sec)*100);
+    prog.style.width = pct+"%";
+    disp.textContent = new Date(left*1000).toISOString().substr(14,5);
+    if(left<=0){ stopTimer(); try{navigator.vibrate&&navigator.vibrate([50,50,50]);}catch(e){} }
+  }, 200);
+}
+function stopTimer(){
+  if(timerId){ clearInterval(timerId); timerId=null; }
+}
+
+// Build initial
+buildWeekPills();
+renderWeek();
+buildFeet();
+buildTrack();
+</script>
+</body>
+</html>
