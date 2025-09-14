@@ -5,84 +5,114 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0e13">
 <title>Jiro — 12-Week Hypertrophy + Posture Plan</title>
 <style>
 :root{
+  /* Theme */
   --bg:#0b0e13; --card:#111822; --muted:#8ea0b7; --text:#e6edf5; --accent:#6bd1ff; --accent2:#9ef0a2;
   --warn:#ffd166; --bad:#ff7b7b; --good:#58d68d; --line:#253246; --pill:#121c2a;
+  /* iOS safe areas + chrome sizes (set by JS) */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --headerH: 64px; /* updated at runtime */
+  --tabH: 64px;    /* updated at runtime */
 }
 *{box-sizing:border-box}
-html,body{width: 100%;max-width: 100%;margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-a{color:var(--accent)}
-.container{width:100%;max-width:980px;margin:0 auto;padding:14px}
-.header{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,14,19,.98),rgba(11,14,19,.92));backdrop-filter:blur(6px);z-index:50;border-bottom:1px solid var(--line)}
-.header .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 14px}
-.h1{font-size:18px;font-weight:700;letter-spacing:.1px}
-.small{color:var(--muted);font-size:12px}
-select,input,button,textarea{
-  background:#0f1520;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px;
-  font-size:14px
-}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; -webkit-text-size-adjust:100%;}
+/* Mobile-first type & spacing (>=16px to avoid iOS zoom on inputs) */
+body{font-size:16px; line-height:1.35;}
+a{color:var(--accent); text-decoration:none}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:10px}
+
+.container{width:100%; max-width:720px; margin:0 auto; padding:12px 12px calc(var(--tabH) + var(--safe-bottom) + 12px)}
+.header{position:sticky; top:0; padding-top:var(--safe-top); background:linear-gradient(180deg,rgba(11,14,19,.98),rgba(11,14,19,.92)); backdrop-filter:blur(6px); z-index:50; border-bottom:1px solid var(--line)}
+.header .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 12px}
+.h1{font-size:18px; font-weight:700; letter-spacing:.1px}
+.small{color:var(--muted); font-size:13px}
+select,input,button,textarea{background:#0f1520; color:var(--text); border:1px solid var(--line); border-radius:12px; padding:12px 12px; font-size:16px; min-height:44px}
 button{cursor:pointer}
-.btn{background:linear-gradient(180deg,#132133,#0f1a2a);border-color:#1f2d42}
-.btn-accent{background:linear-gradient(180deg,#103247,#0e2a3a);border-color:#204a63}
-.btn-good{background:linear-gradient(180deg,#0f2f24,#0d261d);border-color:#1f4f3d}
-.grid{display:grid;gap:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{background:linear-gradient(180deg,#132133,#0f1a2a); border-color:#1f2d42}
+.btn-accent{background:linear-gradient(180deg,#103247,#0e2a3a); border-color:#204a63}
+.btn-good{background:linear-gradient(180deg,#0f2f24,#0d261d); border-color:#1f4f3d}
+.grid{display:grid; gap:12px}
+.card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px}
+.row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
 .space{height:6px}
-.tabbar{position:sticky;bottom:0;background:rgba(11,14,19,.98);border-top:1px solid var(--line);z-index:40}
-.tabs{display:grid;grid-template-columns:repeat(6,1fr)}
-.tab{padding:10px 4px;text-align:center;font-size:12px;color:var(--muted)}
+
+/* Bottom tabs fixed, safe-area aware */
+.tabbar{position:fixed; left:0; right:0; bottom:0; background:rgba(11,14,19,.98); border-top:1px solid var(--line); z-index:60; padding-bottom:var(--safe-bottom)}
+.tabs{display:grid; grid-template-columns:repeat(6,1fr)}
+.tab{padding:12px 4px; text-align:center; font-size:12px; color:var(--muted)}
 .tab.active{color:var(--accent)}
-.badge{font-size:11px;color:#a2c8ff;background:#16243a;border:1px solid var(--line);padding:2px 8px;border-radius:999px}
-table{width:100%;border-collapse:separate;border-spacing:0}
-th,td{border-bottom:1px solid var(--line);padding:8px 6px;vertical-align:top}
-th{color:var(--muted);font-weight:600;text-align:left;background:#101723;position:sticky;top:92px;z-index:5}
-.k{font-weight:600;color:var(--accent2)}
-.checkbox{appearance:none;width:22px;height:22px;border:1.6px solid #32537f;border-radius:6px;display:inline-grid;place-content:center;margin-right:8px;background:#0e1420}
-.checkbox:checked{background:linear-gradient(180deg,#1e9de6,#26b4ff);border-color:#26b4ff}
-.setbox{display:inline-flex;gap:6px;flex-wrap:wrap}
-.tag{background:#152033;border:1px solid var(--line);color:var(--muted);padding:2px 8px;border-radius:999px;font-size:11px}
-h2{font-size:16px;margin:0 0 8px 0}
-h3{font-size:14px;margin:12px 0 6px 0;color:var(--muted)}
-hr{border:0;border-top:1px solid var(--line);margin:10px 0}
-.notice{background:#0f1420;border:1px dashed #2a3c59;border-radius:12px;padding:10px;color:var(--muted)}
+
+.badge{font-size:12px; color:#a2c8ff; background:#16243a; border:1px solid var(--line); padding:4px 10px; border-radius:999px}
+
+/* Tables → mobile scrollable */
+.table-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+.table-scroll table{min-width:560px}
+
+/* Table base */
+table{width:100%; border-collapse:separate; border-spacing:0}
+th,td{border-bottom:1px solid var(--line); padding:10px 8px; vertical-align:top}
+th{color:var(--muted); font-weight:600; text-align:left; background:#101723; position:sticky; top:calc(var(--headerH) + 8px); z-index:5}
+
+.k{font-weight:600; color:var(--accent2)}
+.checkbox{appearance:none; -webkit-appearance:none; width:28px; height:28px; border:1.6px solid #32537f; border-radius:8px; display:inline-grid; place-content:center; margin-right:8px; background:#0e1420}
+.checkbox:checked{background:linear-gradient(180deg,#1e9de6,#26b4ff); border-color:#26b4ff}
+.setbox{display:inline-flex; gap:6px; flex-wrap:wrap}
+.cap{display:inline-block; min-width:28px; text-align:center}
+
+.tag{background:#152033; border:1px solid var(--line); color:var(--muted); padding:2px 8px; border-radius:999px; font-size:12px}
+
+h2{font-size:18px; margin:0 0 8px 0}
+h3{font-size:15px; margin:12px 0 6px 0; color:var(--muted)}
+hr{border:0; border-top:1px solid var(--line); margin:10px 0}
+.notice{background:#0f1420; border:1px dashed #2a3c59; border-radius:12px; padding:10px; color:var(--muted)}
 .warn{color:var(--warn)}
 .good{color:var(--accent2)}
 .bad{color:var(--bad)}
-footer{padding:20px 10px 90px 10px;color:var(--muted);font-size:12px;text-align:center}
-.sticky-title{position:sticky;top:82px;background:var(--card);padding:6px 8px;border-bottom:1px solid var(--line);z-index:6;border-radius:10px}
-input[type="date"]{padding:8px 10px}
-.rowwrap{display:flex;flex-wrap:wrap;gap:8px}
-.flex{display:flex;gap:8px}
-.flex-col{display:flex;flex-direction:column;gap:8px}
+footer{padding:16px 10px calc(var(--tabH) + var(--safe-bottom)); color:var(--muted); font-size:12px; text-align:center}
+
+.sticky-title{position:sticky; top:calc(var(--headerH) + 8px); background:var(--card); padding:6px 8px; border-bottom:1px solid var(--line); z-index:6; border-radius:10px}
+
+.rowwrap{display:flex; flex-wrap:wrap; gap:8px}
+.flex{display:flex; gap:8px}
+.flex-col{display:flex; flex-direction:column; gap:8px}
 .justify-between{justify-content:space-between}
 .w100{width:100%}
-.details{border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.details summary{list-style:none;cursor:pointer;padding:10px 12px;background:#0f1622;border-bottom:1px solid var(--line)}
+
+.details{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+.details summary{list-style:none; cursor:pointer; padding:10px 12px; background:#0f1622; border-bottom:1px solid var(--line)}
 .details summary::-webkit-details-marker{display:none}
 .details[open] summary{border-bottom:1px solid var(--line)}
 .details .content{padding:10px 12px}
-.scroller{display:flex;gap:8px;overflow:auto;padding-bottom:6px}
-.weekpill{padding:6px 10px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;color:var(--muted);background:var(--pill);font-size:12px}
-.weekpill.active{background:linear-gradient(180deg,#113049,#0e2437);color:#e5f6ff;border-color:#234f73}
-.session{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:8px 0}
-.sessionHead{display:flex;align-items:center;justify-content:space-between;background:#0f1724;padding:10px 12px}
+
+.scroller{display:flex; gap:8px; overflow:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch}
+.weekpill{padding:8px 12px; border-radius:999px; border:1px solid var(--line); white-space:nowrap; color:var(--muted); background:var(--pill); font-size:13px}
+.weekpill.active{background:linear-gradient(180deg,#113049,#0e2437); color:#e5f6ff; border-color:#234f73}
+
+.session{border:1px solid var(--line); border-radius:14px; overflow:hidden; margin:8px 0}
+.sessionHead{display:flex; align-items:center; justify-content:space-between; background:#0f1724; padding:10px 12px}
 .sessionTitle{font-weight:600}
-.btn-xs{padding:6px 8px;border-radius:10px;font-size:12px}
+.btn-xs{padding:8px 10px; border-radius:10px; font-size:14px; min-height:36px}
 .bodyPad{padding:10px 12px}
-.label{color:var(--muted);font-size:12px}
-.input{width:100%;margin-top:4px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.grid1{display:grid;grid-template-columns:1fr;gap:8px}
-.timer{font-variant-numeric:tabular-nums;font-size:18px;padding:6px 10px;border:1px solid var(--line);border-radius:10px}
-.progress{height:6px;background:#0e1420;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
-.progress>i{display:block;height:100%;background:linear-gradient(90deg,#1e9de6,#26b4ff)}
-.cap{display:inline-block;min-width:26px;text-align:center}
+.label{color:var(--muted); font-size:13px}
+.input{width:100%; margin-top:4px}
+.grid2{display:grid; grid-template-columns:1fr; gap:8px} /* single column on mobile */
+.grid1{display:grid; grid-template-columns:1fr; gap:8px}
+
+.timer{font-variant-numeric:tabular-nums; font-size:20px; padding:8px 12px; border:1px solid var(--line); border-radius:10px}
+.progress{height:8px; background:#0e1420; border-radius:999px; overflow:hidden; border:1px solid var(--line)}
+.progress>i{display:block; height:100%; background:linear-gradient(90deg,#1e9de6,#26b4ff)}
+
 /* iOS tap highlight */
-a,button,input,select{ -webkit-tap-highlight-color: rgba(255,255,255,0.05); }
-/* print */
+a,button,input,select{ -webkit-tap-highlight-color: rgba(255,255,255,0.05); touch-action:manipulation; }
+
+/* Avoid iOS rubber-band on inner scroll areas */
+body{overscroll-behavior-y:none}
+
+/* Print (unchanged) */
 @media print{
   .header,.tabbar{display:none}
   body{background:#fff;color:#000}
@@ -92,13 +122,13 @@ a,button,input,select{ -webkit-tap-highlight-color: rgba(255,255,255,0.05); }
 </style>
 </head>
 <body>
-<div class="header">
+<div class="header" id="header">
   <div class="row">
     <div class="h1">12-Week Hypertrophy + Posture</div>
     <div class="badge">Knee Iso + Flat-Foot</div>
     <div class="small">Progress saves on your device</div>
   </div>
-  <div class="row" style="padding:0 14px 10px 14px">
+  <div class="row" style="padding:0 12px 10px 12px">
     <label class="small">Start&nbsp;</label>
     <input id="startDate" type="date">
     <label class="small">&nbsp;Split</label>
@@ -167,10 +197,12 @@ a,button,input,select{ -webkit-tap-highlight-color: rgba(255,255,255,0.05); }
 
   <div class="card">
     <h2>Flat-Foot Daily Micro-Routine (8–12 min)</h2>
-    <table>
-      <thead><tr><th>#</th><th>Drill</th><th>Prescription</th><th>Done</th></tr></thead>
-      <tbody id="feetBody"></tbody>
-    </table>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>#</th><th>Drill</th><th>Prescription</th><th>Done</th></tr></thead>
+        <tbody id="feetBody"></tbody>
+      </table>
+    </div>
     <h3>Progression Cues</h3>
     <ul class="small">
       <li>Wk 1–2: learn positions, build to 30s holds.</li>
@@ -222,31 +254,31 @@ a,button,input,select{ -webkit-tap-highlight-color: rgba(255,255,255,0.05); }
       </div>
       <div class="w100">
         <label class="label">Bodyweight (kg)</label>
-        <input class="input" id="bw" type="number" step="0.1">
+        <input class="input" id="bw" type="number" step="0.1" inputmode="decimal">
       </div>
       <div class="w100">
         <label class="label">Waist (cm)</label>
-        <input class="input" id="waist" type="number" step="0.1">
+        <input class="input" id="waist" type="number" step="0.1" inputmode="decimal">
       </div>
       <div class="w100">
         <label class="label">Thigh (cm)</label>
-        <input class="input" id="thigh" type="number" step="0.1">
+        <input class="input" id="thigh" type="number" step="0.1" inputmode="decimal">
       </div>
       <div class="w100">
         <label class="label">Shoulders (cm)</label>
-        <input class="input" id="shoulders" type="number" step="0.1">
+        <input class="input" id="shoulders" type="number" step="0.1" inputmode="decimal">
       </div>
       <div class="w100">
         <label class="label">Avg Session RPE (1–10)</label>
-        <input class="input" id="srpe" type="number" step="0.1" min="1" max="10">
+        <input class="input" id="srpe" type="number" step="0.1" min="1" max="10" inputmode="decimal">
       </div>
       <div class="w100">
         <label class="label">Knee Pain (0–10)</label>
-        <input class="input" id="knee" type="number" step="0.1" min="0" max="10">
+        <input class="input" id="knee" type="number" step="0.1" min="0" max="10" inputmode="decimal">
       </div>
       <div class="w100">
         <label class="label">Steps/day</label>
-        <input class="input" id="steps" type="number" step="1">
+        <input class="input" id="steps" type="number" step="1" inputmode="numeric">
       </div>
       <div class="w100">
         <label class="label">Notes</label>
@@ -273,7 +305,7 @@ a,button,input,select{ -webkit-tap-highlight-color: rgba(255,255,255,0.05); }
   <footer>Tips: Share → “Add to Home Screen” on iPhone for app-like access. Data stays on your device (localStorage).</footer>
 </div>
 
-<div class="tabbar">
+<div class="tabbar" id="tabbar">
   <div class="tabs">
     <div class="tab active" data-tab="weeks">Weeks</div>
     <div class="tab" data-tab="knee">Knee</div>
@@ -285,6 +317,17 @@ a,button,input,select{ -webkit-tap-highlight-color: rgba(255,255,255,0.05); }
 </div>
 
 <script>
+// ==== iPhone Safari sizing helpers ====
+function updateChromeSizes(){
+  const header = document.getElementById('header');
+  const tabbar = document.getElementById('tabbar');
+  const root = document.documentElement.style;
+  if(header){ root.setProperty('--headerH', header.offsetHeight + 'px'); }
+  if(tabbar){ root.setProperty('--tabH', tabbar.offsetHeight + 'px'); }
+}
+window.addEventListener('resize', updateChromeSizes, {passive:true});
+window.addEventListener('orientationchange', updateChromeSizes, {passive:true});
+
 // ==== Data ====
 const DEFAULT_START = "2025-09-23";
 
@@ -348,8 +391,8 @@ const schedules = {
   ],
   "5": [
     ["Tue","Lower A (Quad Bias + Knee Care)"],
-    ["Wed","Upper A (Balanced Push/Pull)","Upper Push"], // label stays Upper A per template
-    ["Thu","Upper B (Delts/Arms/Lats)","Upper Pull"],    // label stays Upper B per template
+    ["Wed","Upper A (Balanced Push/Pull)","Upper Push"],
+    ["Thu","Upper B (Delts/Arms/Lats)","Upper Pull"],
     ["Fri","Lower B (Glutes/Hamstrings + Calves)"],
     ["Sat","Shoulders/Arms + Core (5-Day extra)"],
     ["Sun (opt.)","Optional Conditioning + Mobility"],
@@ -377,13 +420,11 @@ let state = loadState() || {
   tracking: {} // { week: {...} }
 };
 
-function saveState(){ localStorage.setItem(SKEY, JSON.stringify(state)); }
+function saveState(){ try{ localStorage.setItem(SKEY, JSON.stringify(state)); }catch(e){} }
 function loadState(){
   try{ return JSON.parse(localStorage.getItem(SKEY)||""); }catch(e){ return null; }
 }
-function resetChecksForWeek(w){
-  // no automatic reset; keep user's checks
-}
+function resetChecksForWeek(w){ /* keep user's checks */ }
 
 // ==== Helpers ====
 function el(sel, root=document){ return root.querySelector(sel); }
@@ -444,7 +485,7 @@ function renderWeek(){
     body.appendChild(sectionCheck("Warm-up (5–8m)", warmupText, [day, state.week, "warmup", sessName]));
     body.appendChild(sectionCheck("Activation (6–10m)", activationText, [day, state.week, "activation", sessName]));
 
-    // Exercise table
+    // Exercise table (wrapped for horizontal scroll on mobile)
     const t = document.createElement("table");
     t.innerHTML = `<thead><tr><th>Exercise</th><th>Sets×Reps</th><th>Tempo</th><th>Rest</th><th>RPE</th><th>Sets</th></tr></thead>`;
     const tb = document.createElement("tbody");
@@ -466,7 +507,10 @@ function renderWeek(){
       tb.appendChild(tr);
     });
     t.appendChild(tb);
-    body.appendChild(t);
+    const twrap = document.createElement('div');
+    twrap.className = 'table-scroll';
+    twrap.appendChild(t);
+    body.appendChild(twrap);
 
     wrap.appendChild(head);
     wrap.appendChild(body);
@@ -570,7 +614,7 @@ el("#importFile").addEventListener("change", (ev)=>{
       // re-render
       el("#startDate").value = state.start;
       el("#splitSel").value = state.split;
-      buildWeekPills(); renderWeek(); buildFeet(); buildTrack();
+      buildWeekPills(); renderWeek(); buildFeet(); buildTrack(); updateChromeSizes();
       alert("Imported!");
     }catch(e){ alert("Import failed: "+e); }
   };
@@ -583,7 +627,7 @@ el("#startDate").onchange = ()=>{ state.start = el("#startDate").value || DEFAUL
 el("#splitSel").value = state.split;
 el("#splitSel").onchange = ()=>{ state.split = el("#splitSel").value; saveState(); renderWeek(); };
 
-// Tabs (just scroll to relevant section)
+// Tabs (scroll to sections)
 els(".tab").forEach(t=>{
   t.onclick = ()=>{
     els(".tab").forEach(x=>x.classList.remove("active"));
@@ -612,15 +656,14 @@ function startTimer(sec){
     if(left<=0){ stopTimer(); try{navigator.vibrate&&navigator.vibrate([50,50,50]);}catch(e){} }
   }, 200);
 }
-function stopTimer(){
-  if(timerId){ clearInterval(timerId); timerId=null; }
-}
+function stopTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
 
 // Build initial
 buildWeekPills();
 renderWeek();
 buildFeet();
 buildTrack();
+updateChromeSizes();
 </script>
 </body>
 </html>
