@@ -430,3 +430,253 @@ const SKEY = "jiro_plan_state_v1";
 let state = loadState() || {
   start: DEFAULT_START,
   split: "4",
+  week: 1,
+  checks: {},  // { key: true/false }
+  tracking: {} // { week: {...} }
+};
+
+function saveState(){ localStorage.setItem(SKEY, JSON.stringify(state)); }
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(SKEY)||""); }catch(e){ return null; }
+}
+function resetChecksForWeek(w){
+  // no automatic reset; keep user's checks
+}
+
+// ==== Helpers ====
+function el(sel, root=document){ return root.querySelector(sel); }
+function els(sel, root=document){ return Array.from(root.querySelectorAll(sel)); }
+function fmtDate(d){
+  const o = {month:"short", day:"numeric"};
+  return d.toLocaleDateString(undefined, o);
+}
+function weekRange(startStr, w){
+  const s0 = new Date(startStr+"T00:00:00");
+  const s = new Date(s0.getTime() + (w-1)*7*864e5);
+  const e = new Date(s.getTime() + 6*864e5);
+  return [s,e];
+}
+function keyFor(pathArr){ return pathArr.join(" | "); }
+
+// ==== Build UI ====
+function buildWeekPills(){
+  const scroller = el("#weekScroller");
+  scroller.innerHTML = "";
+  for(let w=1; w<=12; w++){
+    const pill = document.createElement("button");
+    pill.className = "weekpill"+(state.week===w?" active":"");
+    pill.textContent = "Week "+w;
+    pill.onclick = ()=>{ state.week=w; saveState(); renderWeek(); buildWeekPills(); };
+    scroller.appendChild(pill);
+  }
+  const [s,e] = weekRange(state.start, 1);
+  const [s2,e2] = weekRange(state.start, 12);
+  el("#daterange").textContent = fmtDate(s)+" — "+fmtDate(e2)+", "+e2.getFullYear();
+}
+
+function renderWeek(){
+  el("#weekTitle").textContent = "Week "+state.week;
+  const [s,e] = weekRange(state.start, state.week);
+  el("#weekDates").textContent = fmtDate(s)+" — "+fmtDate(e)+", "+e.getFullYear();
+  el("#weekNote").textContent = ([4,8,12].includes(state.week) ? "Deload: volume −30—40%, RPE 5—6" : "");
+
+  const cont = el("#sessions");
+  cont.innerHTML = "";
+
+  const sched = schedules[state.split];
+  sched.forEach(([day, sessName, alt])=>{
+    // Session card
+    const wrap = document.createElement("div");
+    wrap.className = "session";
+    const head = document.createElement("div");
+    head.className = "sessionHead";
+    head.innerHTML = `<div class="sessionTitle">${day} — ${alt?`<span class="small">${alt}</span>`:``}<br><span class="small">${sessName}</span></div>
+      <div class="row">
+        <button class="btn btn-xs" onclick="toggleDetails(this)">Open</button>
+      </div>`;
+    const body = document.createElement("div");
+    body.className = "bodyPad";
+    body.style.display = "none";
+
+    // Warm-up / Activation
+    body.appendChild(sectionCheck("Warm-up (5—8m)", warmupText, [day, state.week, "warmup", sessName]));
+    body.appendChild(sectionCheck("Activation (6—10m)", activationText, [day, state.week, "activation", sessName]));
+
+    // Exercise table
+    const t = document.createElement("table");
+    t.className = "exercise-table";
+    t.innerHTML = `<thead><tr><th>Exercise</th><th>Sets×Reps</th><th>Tempo</th><th>Rest</th><th>RPE</th><th>Sets</th></tr></thead>`;
+    const tb = document.createElement("tbody");
+    (sessionsDef[sessName]||[]).forEach((it, idx)=>{
+      const [name, sr, tempo, rest, rpe, sets] = it;
+      const tr = document.createElement("tr");
+      const kbase = [day, state.week, sessName, "ex", idx];
+      tr.innerHTML = `<td>${name}</td><td>${sr}</td><td>${tempo}</td><td>${rest}</td><td>${rpe}</td>`;
+      const td = document.createElement("td");
+      td.className = "setbox";
+      for(let i=0; i<sets; i++){
+        const cap = document.createElement("span");
+        cap.className = "cap";
+        const key = keyFor(kbase.concat(["set", i]));
+        cap.innerHTML = `<input type="checkbox" class="checkbox" ${state.checks[key]?"checked":""} onchange="toggleCheck('${key}', this.checked)">`;
+        td.appendChild(cap);
+      }
+      tr.appendChild(td);
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    body.appendChild(t);
+
+    wrap.appendChild(head);
+    wrap.appendChild(body);
+    cont.appendChild(wrap);
+  });
+}
+
+function sectionCheck(title, text, path){
+  const div = document.createElement("div");
+  div.style.margin = "6px 0 10px 0";
+  const key = keyFor(path);
+  const checked = !!state.checks[key];
+  div.innerHTML = `<div class="row">
+    <input type="checkbox" class="checkbox" ${checked?"checked":""} onchange="toggleCheck('${key}', this.checked)">
+    <div><div class="label">${title}</div><div class="small">${text}</div></div>
+  </div>`;
+  return div;
+}
+
+function toggleDetails(btn){
+  const body = btn.closest(".session").querySelector(".bodyPad");
+  const open = body.style.display !== "none";
+  body.style.display = open ? "none" : "block";
+  btn.textContent = open ? "Open" : "Close";
+}
+
+function toggleCheck(key, val){
+  state.checks[key] = !!val;
+  saveState();
+}
+
+function buildFeet(){
+  const tbody = el("#feetBody");
+  tbody.innerHTML = "";
+  feetDrills.forEach(([i,drill,presc], idx)=>{
+    const tr = document.createElement("tr");
+    const k = keyFor(["feet", idx]);
+    tr.innerHTML = `<td>${i}</td><td>${drill}</td><td>${presc}</td>
+      <td><input type="checkbox" class="checkbox" ${state.checks[k]?"checked":""} onchange="toggleCheck('${k}', this.checked)"></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// Tracking
+function buildTrack(){
+  const sel = el("#trackWeek");
+  sel.innerHTML = "";
+  for(let w=1; w<=12; w++){
+    const op = document.createElement("option");
+    op.value = w; op.textContent = "Week "+w;
+    if(w===state.week) op.selected = true;
+    sel.appendChild(op);
+  }
+  sel.onchange = ()=>{ loadTrack(+sel.value); };
+  loadTrack(+sel.value);
+}
+function loadTrack(w){
+  const rec = state.tracking[w] || {};
+  el("#bw").value = rec.bw || "";
+  el("#waist").value = rec.waist || "";
+  el("#thigh").value = rec.thigh || "";
+  el("#shoulders").value = rec.shoulders || "";
+  el("#srpe").value = rec.srpe || "";
+  el("#knee").value = rec.knee || "";
+  el("#steps").value = rec.steps || "";
+  el("#notes").value = rec.notes || "";
+}
+el("#saveTrack").onclick = ()=>{
+  const w = +el("#trackWeek").value;
+  state.tracking[w] = {
+    bw: el("#bw").value,
+    waist: el("#waist").value,
+    thigh: el("#thigh").value,
+    shoulders: el("#shoulders").value,
+    srpe: el("#srpe").value,
+    knee: el("#knee").value,
+    steps: el("#steps").value,
+    notes: el("#notes").value,
+  };
+  saveState();
+  el("#trackSaved").textContent = "Saved ✓";
+  setTimeout(()=> el("#trackSaved").textContent="", 1500);
+};
+
+// Export / Import
+el("#exportBtn").onclick = ()=>{
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "jiro_plan_progress.json"; a.click();
+  URL.revokeObjectURL(url);
+};
+el("#importFile").addEventListener("change", (ev)=>{
+  const f = ev.target.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const obj = JSON.parse(reader.result);
+      state = obj; saveState();
+      // re-render
+      el("#startDate").value = state.start;
+      el("#splitSel").value = state.split;
+      buildWeekPills(); renderWeek(); buildFeet(); buildTrack();
+      alert("Imported!");
+    }catch(e){ alert("Import failed: "+e); }
+  };
+  reader.readAsText(f);
+});
+
+// Start date & split
+el("#startDate").value = state.start;
+el("#startDate").onchange = ()=>{ state.start = el("#startDate").value || DEFAULT_START; saveState(); buildWeekPills(); renderWeek(); };
+el("#splitSel").value = state.split;
+el("#splitSel").onchange = ()=>{ state.split = el("#splitSel").value; saveState(); renderWeek(); };
+
+// Tabs (just scroll to relevant section)
+els(".tab").forEach(t=>{
+  t.onclick = ()=>{
+    els(".tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    const which = t.getAttribute("data-tab");
+    if(which==="weeks") window.scrollTo({top:0, behavior:"smooth"});
+    if(which==="knee") document.querySelectorAll(".card")[1].scrollIntoView({behavior:"smooth"});
+    if(which==="feet") document.querySelectorAll(".card")[2].scrollIntoView({behavior:"smooth"});
+    if(which==="mobility") document.querySelectorAll(".card")[3].scrollIntoView({behavior:"smooth"});
+    if(which==="tech") document.querySelectorAll(".card")[4].scrollIntoView({behavior:"smooth"});
+    if(which==="track") document.querySelectorAll(".card")[6].scrollIntoView({behavior:"smooth"});
+  };
+});
+
+// Iso Timer
+let timerId = null, timerEnd = 0;
+function startTimer(sec){
+  stopTimer();
+  const prog = el("#isoProg"); const disp = el("#isoTimer");
+  timerEnd = Date.now() + sec*1000;
+  timerId = setInterval(()=>{
+    const left = Math.max(0, Math.round((timerEnd - Date.now())/1000));
+    const pct = 100 - Math.round((left/sec)*100);
+    prog.style.width = pct+"%";
+    disp.textContent = new Date(left*1000).toISOString().substr(14,5);
+    if(left<=0){ stopTimer(); try{navigator.vibrate&&navigator.vibrate([50,50,50]);}catch(e){} }
+  }, 200);
+}
+function stopTimer(){
+  if(timerId){ clearInterval(timerId); timerId=null; }
+}
+
+// Build initial
+buildWeekPills();
+renderWeek();
+buildFeet();
+buildTrack();
